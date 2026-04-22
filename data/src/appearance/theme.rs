@@ -134,6 +134,33 @@ impl Default for Button {
     }
 }
 
+impl Button {
+    pub fn background(&self, style: ButtonStyle) -> &Color {
+        match (style.selected, style.hover) {
+            (false, false) => &self.background,
+            (false, true) => &self.background_hover,
+            (true, false) => &self.background_selected,
+            (true, true) => &self.background_selected_hover,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct ButtonStyle {
+    pub selected: bool,
+    pub hover: bool,
+}
+
+#[allow(clippy::derivable_impls)]
+impl Default for ButtonStyle {
+    fn default() -> Self {
+        Self {
+            selected: false,
+            hover: false,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(default)]
 pub struct General {

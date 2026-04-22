@@ -20,6 +20,26 @@ pub fn action(theme: &Theme) -> Option<FontStyle> {
     theme.styles().buffer.action.font_style
 }
 
+pub fn button_primary(theme: &Theme) -> Option<FontStyle> {
+    primary(theme)
+}
+
+pub fn button_secondary(theme: &Theme) -> Option<FontStyle> {
+    secondary(theme)
+}
+
+pub fn button_picker(theme: &Theme) -> Option<FontStyle> {
+    button_primary(theme)
+}
+
+pub fn button_preview_card(theme: &Theme) -> Option<FontStyle> {
+    primary(theme)
+}
+
+pub fn button_preview_card_secondary(theme: &Theme) -> Option<FontStyle> {
+    button_secondary(theme)
+}
+
 pub fn nickname(theme: &Theme, is_user_offline: bool) -> Option<FontStyle> {
     if is_user_offline {
         theme.styles().buffer.nickname_offline.font_style

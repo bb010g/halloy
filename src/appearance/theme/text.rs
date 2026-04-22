@@ -40,6 +40,22 @@ pub fn tertiary(theme: &Theme) -> Style {
     }
 }
 
+pub fn button_primary(theme: &Theme) -> Style {
+    primary(theme)
+}
+
+pub fn button_secondary(theme: &Theme) -> Style {
+    secondary(theme)
+}
+
+pub fn button_preview_card_primary(theme: &Theme) -> Style {
+    primary(theme)
+}
+
+pub fn button_preview_card_secondary(theme: &Theme) -> Style {
+    button_secondary(theme)
+}
+
 pub fn error(theme: &Theme) -> Style {
     Style {
         color: Some(theme.styles().text.error.color),

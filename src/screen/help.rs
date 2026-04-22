@@ -44,11 +44,13 @@ impl Help {
         }
     }
 
-    pub fn view<'a>(&self, theme: &Theme) -> Element<'a, Message> {
+    pub fn view<'a>(&self, theme: &'a Theme) -> Element<'a, Message> {
         let config_button = button(
-            container(text("Open Config Directory"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Open Config Directory").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fixed(250.0))
@@ -56,9 +58,11 @@ impl Help {
         .on_press(Message::OpenConfigurationDirectory);
 
         let wiki_button = button(
-            container(text("Open Wiki Website"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Open Wiki Website").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fill)
@@ -66,9 +70,11 @@ impl Help {
         .on_press(Message::OpenWikiWebsite);
 
         let refresh_button = button(
-            container(text("Refresh Halloy"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Refresh Halloy").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fixed(250.0))

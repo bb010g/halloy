@@ -7,7 +7,7 @@ use futures::TryFutureExt;
 use iced::Length::*;
 use iced::alignment::Vertical;
 use iced::widget::text::LineHeight;
-use iced::widget::{button, center, column, container, row, text_input};
+use iced::widget::{button, center, column, container, row, text, text_input};
 use iced::{Color, Length, Padding, Task, Vector, alignment, clipboard};
 use strum::IntoEnumIterator;
 use tokio::time;
@@ -17,7 +17,7 @@ use crate::widget::{
     Element, color_picker, combo_box, font_style_pick_list, tooltip,
 };
 use crate::window::{self, Window};
-use crate::{icon, open_url, platform_specific, widget};
+use crate::{font, icon, open_url, platform_specific, widget};
 
 #[derive(Debug, Clone)]
 pub enum Event {
@@ -309,10 +309,13 @@ impl ThemeEditor {
 
         let save = match self.save_result {
             Some(is_success) => status_button(is_success),
-            None => secondary_button("Save to Disk", Message::Save),
+            None => secondary_button("Save to Disk", Message::Save, theme),
         };
-        let apply =
-            secondary_button("Apply Colors & Font Styles", Message::Apply);
+        let apply = secondary_button(
+            "Apply Colors & Font Styles",
+            Message::Apply,
+            theme,
+        );
 
         let copy = if self.copied {
             success_icon()
@@ -394,11 +397,17 @@ fn success_icon<'a>() -> Element<'a, Message> {
         .into()
 }
 
-fn secondary_button(label: &str, message: Message) -> Element<'_, Message> {
+fn secondary_button<'a>(
+    label: &'a str,
+    message: Message,
+    theme: &'a Theme,
+) -> Element<'a, Message> {
     button(
-        container(label)
-            .align_x(alignment::Horizontal::Center)
-            .width(Fill),
+        container(text(label).font_maybe(
+            theme::font_style::button_secondary(theme).map(font::get),
+        ))
+        .align_x(alignment::Horizontal::Center)
+        .width(Fill),
     )
     .padding(5)
     .width(Fill)
@@ -478,7 +487,7 @@ impl Component {
             Component::General(_) => None,
             Component::Text(text) => Some(text.font_style(styles)),
             Component::Buffer(buffer) => buffer.font_style(styles),
-            Component::Buttons(_) => None,
+            Component::Buttons(buttons) => buttons.font_style(styles),
             Component::Formatting(_) => None,
         }
     }
@@ -502,7 +511,7 @@ impl Component {
                 buffer.update(&mut styles.buffer, color, font_style);
             }
             Component::Buttons(buttons) => {
-                buttons.update(&mut styles.buttons, color);
+                buttons.update(&mut styles.buttons, color, font_style);
             }
             Component::Formatting(formatting) => {
                 formatting.update(&mut styles.formatting, color);
@@ -1099,13 +1108,29 @@ impl Buttons {
         }
     }
 
-    fn update(&self, styles: &mut theme::Buttons, color: Option<Color>) {
+    fn font_style(&self, styles: &Styles) -> Option<Option<FontStyle>> {
         match self {
             Buttons::Primary(button) => {
-                button.update(&mut styles.primary, color);
+                button.font_style(&styles.buttons.primary)
             }
             Buttons::Secondary(button) => {
-                button.update(&mut styles.secondary, color);
+                button.font_style(&styles.buttons.secondary)
+            }
+        }
+    }
+
+    fn update(
+        &self,
+        styles: &mut theme::Buttons,
+        color: Option<Color>,
+        font_style: Option<FontStyle>,
+    ) {
+        match self {
+            Buttons::Primary(button) => {
+                button.update(&mut styles.primary, color, font_style);
+            }
+            Buttons::Secondary(button) => {
+                button.update(&mut styles.secondary, color, font_style);
             }
         }
     }
@@ -1137,7 +1162,22 @@ impl Button {
         }
     }
 
-    fn update(&self, styles: &mut theme::Button, color: Option<Color>) {
+    fn font_style(&self, _styles: &theme::Button) -> Option<Option<FontStyle>> {
+        match self {
+            Button::Background => None,
+            Button::BackgroundHover => None,
+            Button::BackgroundSelected => None,
+            Button::BackgroundSelectedHover => None,
+            Button::BorderActive => None,
+        }
+    }
+
+    fn update(
+        &self,
+        styles: &mut theme::Button,
+        color: Option<Color>,
+        _font_style: Option<FontStyle>,
+    ) {
         match self {
             Button::Background => {
                 if let Some(color) = color {

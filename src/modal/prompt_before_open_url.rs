@@ -22,9 +22,14 @@ pub fn view<'a>(payload: &'a str, theme: &'a Theme) -> Element<'a, Message> {
             .spacing(2),
             column![
                 button(
-                    container(text("Open URL"))
-                        .align_x(alignment::Horizontal::Center)
-                        .width(Length::Fill),
+                    container(
+                        text("Open URL").font_maybe(
+                            theme::font_style::button_secondary(theme)
+                                .map(font::get)
+                        )
+                    )
+                    .align_x(alignment::Horizontal::Center)
+                    .width(Length::Fill),
                 )
                 .padding(5)
                 .width(Length::Fixed(250.0))
@@ -33,9 +38,14 @@ pub fn view<'a>(payload: &'a str, theme: &'a Theme) -> Element<'a, Message> {
                 ))
                 .on_press(Message::OpenURL(payload.to_string())),
                 button(
-                    container(text("Close"))
-                        .align_x(alignment::Horizontal::Center)
-                        .width(Length::Fill),
+                    container(
+                        text("Close").font_maybe(
+                            theme::font_style::button_secondary(theme)
+                                .map(font::get)
+                        )
+                    )
+                    .align_x(alignment::Horizontal::Center)
+                    .width(Length::Fill),
                 )
                 .padding(5)
                 .width(Length::Fixed(250.0))
