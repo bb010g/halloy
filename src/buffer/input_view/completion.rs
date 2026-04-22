@@ -218,8 +218,8 @@ impl Completion {
         let command_view =
             self.commands
                 .view(input, server, config, theme, on_select_command);
-        let emojis_view = self.emojis.view(config, on_select_command);
-        let paths_view = self.paths.view(on_select_command);
+        let emojis_view = self.emojis.view(config, theme, on_select_command);
+        let paths_view = self.paths.view(theme, on_select_command);
         let words_view = self.words.view(on_select_command);
 
         if command_view.is_some()
@@ -718,15 +718,18 @@ impl Commands {
                         let content = text(format!("/{title}"));
 
                         Element::from(
-                            button(content)
-                                .width(width)
-                                .padding(6)
-                                .style(move |theme, status| {
-                                    theme::button::picker(
-                                        theme, status, selected,
-                                    )
-                                })
-                                .on_press(on_select_command(*index)),
+                            button(
+                                content.font_maybe(
+                                    theme::font_style::button_picker(theme)
+                                        .map(font::get),
+                                ),
+                            )
+                            .width(width)
+                            .padding(6)
+                            .style(move |theme, status| {
+                                theme::button::picker(theme, status, selected)
+                            })
+                            .on_press(on_select_command(*index)),
                         )
                     }))
                 };
@@ -3404,6 +3407,7 @@ impl Emojis {
     fn view<'a, Message: Clone + 'a>(
         &self,
         config: &Config,
+        theme: &'a Theme,
         on_select_command: impl Fn(usize) -> Message + Copy + 'a,
     ) -> Option<Element<'a, Message>> {
         match self {
@@ -3445,15 +3449,18 @@ impl Emojis {
                         .shaping(Shaping::Advanced);
 
                         Element::from(
-                            button(content)
-                                .width(width)
-                                .padding(6)
-                                .style(move |theme, status| {
-                                    theme::button::picker(
-                                        theme, status, selected,
-                                    )
-                                })
-                                .on_press(on_select_command(*index)),
+                            button(
+                                content.font_maybe(
+                                    theme::font_style::button_picker(theme)
+                                        .map(font::get),
+                                ),
+                            )
+                            .width(width)
+                            .padding(6)
+                            .style(move |theme, status| {
+                                theme::button::picker(theme, status, selected)
+                            })
+                            .on_press(on_select_command(*index)),
                         )
                     }))
                 };
@@ -3608,6 +3615,7 @@ impl Paths {
 
     fn view<'a, Message: Clone + 'a>(
         &'a self,
+        theme: &'a Theme,
         on_select: impl Fn(usize) -> Message + Copy + 'a,
     ) -> Option<Element<'a, Message>> {
         match self {
@@ -3634,17 +3642,22 @@ impl Paths {
                     column(entries.iter().map(|(index, path)| {
                         let highlighted = Some(*index) == *highlighted;
                         Element::from(
-                            button(text(path.as_str()))
-                                .width(width)
-                                .padding(6)
-                                .style(move |theme, status| {
-                                    theme::button::picker(
-                                        theme,
-                                        status,
-                                        highlighted,
-                                    )
-                                })
-                                .on_press(on_select(*index)),
+                            button(
+                                text(path.as_str()).font_maybe(
+                                    theme::font_style::button_picker(theme)
+                                        .map(font::get),
+                                ),
+                            )
+                            .width(width)
+                            .padding(6)
+                            .style(move |theme, status| {
+                                theme::button::picker(
+                                    theme,
+                                    status,
+                                    highlighted,
+                                )
+                            })
+                            .on_press(on_select(*index)),
                         )
                     }))
                 };

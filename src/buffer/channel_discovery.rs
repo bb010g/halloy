@@ -339,11 +339,11 @@ fn unsafe_list_view<'a>(
         .align_x(alignment::Horizontal::Center)
         .style(theme::text::secondary)
         .font_maybe(theme::font_style::secondary(theme).map(font::get)),
-        button(text("Fetch Channels"))
-            .style(|theme, status| theme::button::secondary(
-                theme, status, false
-            ))
-            .on_press(Message::SendUnsafeList(server.clone()))
+        button(text("Fetch Channels").font_maybe(
+            theme::font_style::button_secondary(theme).map(font::get)
+        ))
+        .style(|theme, status| theme::button::secondary(theme, status, false))
+        .on_press(Message::SendUnsafeList(server.clone()))
     ]
     .spacing(8)
     .align_x(iced::Alignment::Center)

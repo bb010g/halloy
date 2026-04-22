@@ -21,18 +21,19 @@ pub fn preview_content<'a, M: 'a>(
             column![
                 text(title)
                     .shaping(text::Shaping::Advanced)
-                    .style(theme::text::primary)
+                    .style(theme::text::button_preview_card_primary)
                     .font_maybe(
-                        theme::font_style::primary(theme).map(font::get)
+                        theme::font_style::button_preview_card(theme)
+                            .map(font::get)
                     ),
                 description.as_ref().map(|description| {
                     container(
                         text(description)
                             .shaping(text::Shaping::Advanced)
                             .wrapping(text::Wrapping::WordOrGlyph)
-                            .style(theme::text::secondary)
+                            .style(theme::text::button_preview_card_secondary)
                             .font_maybe(
-                                theme::font_style::secondary(theme)
+                                theme::font_style::button_preview_card_secondary(theme)
                                     .map(font::get),
                             ),
                     )

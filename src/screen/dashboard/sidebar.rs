@@ -907,7 +907,7 @@ fn upstream_buffer_button<'a>(
             theme::text::secondary
         }
     } else {
-        theme::text::primary
+        theme::text::button_primary
     };
 
     let buffer_title_font = theme::font_style::primary(theme).map(font::get);
@@ -1423,14 +1423,16 @@ fn upstream_buffer_button<'a>(
                     },
                 };
 
-                button(text(content))
-                    .width(length)
-                    .padding(config.context_menu.padding.entry)
-                    .style(|theme, status| {
-                        theme::button::primary(theme, status, false)
-                    })
-                    .on_press_maybe(message)
-                    .into()
+                button(text(content).font_maybe(
+                    theme::font_style::button_primary(theme).map(font::get),
+                ))
+                .width(length)
+                .padding(config.context_menu.padding.entry)
+                .style(|theme, status| {
+                    theme::button::primary(theme, status, false)
+                })
+                .on_press_maybe(message)
+                .into()
             },
         )
         .into()
