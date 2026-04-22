@@ -1,3 +1,4 @@
+use data::appearance::theme::ButtonStyle;
 use iced::widget::button::{Catalog, Status, Style, StyleFn};
 use iced::{Background, Border, Color};
 
@@ -21,13 +22,16 @@ fn default(theme: &Theme, status: Status) -> Style {
 
 fn button(
     foreground: Color,
+    foreground_hover: Color,
+    foreground_pressed: Color,
     background: Color,
     background_hover: Color,
     background_pressed: Color,
     border_color: Option<Color>,
+    border_color_pressed: Option<Color>,
     status: Status,
 ) -> Style {
-    let border = Border {
+    let border = |border_color: Option<Color>| Border {
         radius: 4.0.into(),
         color: border_color.unwrap_or(Color::TRANSPARENT),
         width: 1.0,
@@ -37,28 +41,31 @@ fn button(
         Status::Active => Style {
             background: Some(Background::Color(background)),
             text_color: foreground,
-            border,
+            border: border(border_color),
             ..Default::default()
         },
         Status::Hovered => Style {
             background: Some(Background::Color(background_hover)),
-            text_color: foreground,
-            border,
+            text_color: foreground_hover,
+            border: border(border_color),
             ..Default::default()
         },
         Status::Pressed => Style {
             background: Some(Background::Color(background_pressed)),
-            text_color: foreground,
-            border,
+            text_color: foreground_pressed,
+            border: border(border_color_pressed),
             ..Default::default()
         },
         Status::Disabled => {
             let active: Style = button(
                 foreground,
+                foreground_hover,
+                foreground_pressed,
                 background,
                 background_hover,
                 background_pressed,
                 border_color,
+                border_color_pressed,
                 Status::Active,
             );
 
@@ -79,134 +86,184 @@ pub fn sidebar_buffer(
     is_focused: bool,
     is_open: bool,
 ) -> Style {
-    let foreground = theme.styles().text.primary.color;
+    let default_foreground = theme.styles().text.primary.color;
     let button_colors = theme.styles().buttons.primary;
 
-    let background = if is_open {
-        button_colors.background_selected
-    } else {
-        button_colors.background
+    let button_style = ButtonStyle {
+        selected: is_open && is_focused,
+        hover: is_open && !is_focused,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: is_open,
+        hover: !button_style.hover,
+    };
+    let button_style_pressed = ButtonStyle {
+        selected: true,
+        hover: false,
     };
 
-    let background_hover = if is_open {
-        button_colors.background_selected_hover
-    } else {
-        button_colors.background_hover
-    };
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
-    let background_pressed = button_colors.background_selected;
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+    let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
+
+    let border_color_base = button_colors
+        .border_active
+        .unwrap_or(theme.styles().buffer.border_selected);
+    let border_color = is_focused.then_some(border_color_base);
+    let border_color_pressed = (!is_focused).then_some(border_color_base);
 
     button(
         foreground,
+        foreground_hover,
+        foreground_pressed,
         background,
         background_hover,
         background_pressed,
-        if matches!(status, Status::Pressed) {
-            !is_focused
-        } else {
-            is_focused
-        }
-        .then_some(
-            button_colors
-                .border_active
-                .unwrap_or(theme.styles().buffer.border_selected),
-        ),
+        border_color,
+        border_color_pressed,
         status,
     )
 }
 
 pub fn primary(theme: &Theme, status: Status, selected: bool) -> Style {
-    let foreground = theme.styles().text.primary.color;
+    let default_foreground = theme.styles().text.primary.color;
     let button_colors = theme.styles().buttons.primary;
 
-    let background = if selected {
-        button_colors.background_selected
-    } else {
-        button_colors.background
+    let button_style = ButtonStyle {
+        selected,
+        hover: false,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: button_style.selected,
+        hover: !button_style.hover,
+    };
+    let button_style_pressed = ButtonStyle {
+        selected: !button_style_hover.selected,
+        hover: button_style_hover.hover,
     };
 
-    let background_hover = if selected {
-        button_colors.background_selected_hover
-    } else {
-        button_colors.background_hover
-    };
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
-    let background_pressed = if selected {
-        button_colors.background_hover
-    } else {
-        button_colors.background_selected_hover
-    };
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+    let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
+
+    let border_color = None;
+    let border_color_pressed = None;
 
     button(
         foreground,
+        foreground_hover,
+        foreground_pressed,
         background,
         background_hover,
         background_pressed,
-        None,
+        border_color,
+        border_color_pressed,
         status,
     )
 }
 
 pub fn secondary(theme: &Theme, status: Status, selected: bool) -> Style {
-    let foreground = theme.styles().text.primary.color;
+    let default_foreground = theme.styles().text.secondary.color;
     let button_colors = theme.styles().buttons.secondary;
 
-    let background = if selected {
-        button_colors.background_selected
-    } else {
-        button_colors.background
+    let button_style = ButtonStyle {
+        selected,
+        hover: false,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: button_style.selected,
+        hover: !button_style.hover,
+    };
+    let button_style_pressed = ButtonStyle {
+        selected: !button_style_hover.selected,
+        hover: button_style_hover.hover,
     };
 
-    let background_hover = if selected {
-        button_colors.background_selected_hover
-    } else {
-        button_colors.background_hover
-    };
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
-    let background_pressed = if selected {
-        button_colors.background_hover
-    } else {
-        button_colors.background_selected_hover
-    };
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+    let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
+
+    let border_color = None;
+    let border_color_pressed = None;
 
     button(
         foreground,
+        foreground_hover,
+        foreground_pressed,
         background,
         background_hover,
         background_pressed,
-        None,
+        border_color,
+        border_color_pressed,
         status,
     )
 }
 
 pub fn picker(theme: &Theme, status: Status, is_selected: bool) -> Style {
-    let foreground = theme.styles().text.primary.color;
+    let default_foreground = theme.styles().text.primary.color;
     let button_colors = theme.styles().buttons.primary;
 
-    let background = if is_selected {
-        button_colors.background_hover
-    } else {
-        button_colors.background
+    let button_style = ButtonStyle {
+        selected: false,
+        hover: is_selected,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: is_selected,
+        hover: !button_style.hover,
+    };
+    let button_style_pressed = ButtonStyle {
+        selected: !button_style.selected,
+        hover: button_style.hover,
     };
 
-    let background_hover = if is_selected {
-        button_colors.background_selected
-    } else {
-        button_colors.background_hover
-    };
+    let foreground = *button_colors.text(button_style);
+    let foreground_hover = *button_colors.text(button_style_hover);
+    let foreground_pressed = *button_colors.text(button_style_pressed);
 
-    let background_pressed = if is_selected {
-        button_colors.background_selected_hover
-    } else {
-        button_colors.background_selected
-    };
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+    let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
+
+    let border_color = None;
+    let border_color_pressed = None;
 
     button(
         foreground,
+        foreground_hover,
+        foreground_pressed,
         background,
         background_hover,
         background_pressed,
-        None,
+        border_color,
+        border_color_pressed,
         status,
     )
 }
@@ -217,34 +274,49 @@ pub fn reaction(
     already_reacted: bool,
     selection: bool,
 ) -> Style {
-    let foreground = theme.styles().text.secondary.color;
+    let default_foreground = theme.styles().text.secondary.color;
     let button_colors = theme.styles().buttons.secondary;
 
-    let background = if selection {
-        button_colors.background_selected
-    } else {
-        button_colors.background
+    let button_style = ButtonStyle {
+        selected: selection,
+        hover: false,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: button_style.selected,
+        hover: !button_style.hover,
+    };
+    let button_style_pressed = ButtonStyle {
+        selected: true,
+        hover: !button_style_hover.hover,
     };
 
-    let background_hover = if selection {
-        button_colors.background_selected_hover
-    } else {
-        button_colors.background_hover
-    };
+    let foreground = *button_colors.text(button_style);
+    let foreground_hover = *button_colors.text(button_style_hover);
+    let foreground_pressed = *button_colors.text(button_style_pressed);
 
-    let background_pressed = button_colors.background_selected;
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+    let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
+
+    let border_color_base =
+        |foreground| button_colors.border_active.unwrap_or(foreground);
+    let border_color = already_reacted.then_some(border_color_base(foreground));
+    let border_color_pressed =
+        (!already_reacted).then_some(border_color_base(foreground_pressed));
 
     button(
         foreground,
+        foreground_hover,
+        foreground_pressed,
         background,
         background_hover,
         background_pressed,
-        if matches!(status, Status::Pressed) {
-            !already_reacted
-        } else {
-            already_reacted
-        }
-        .then_some(button_colors.border_active.unwrap_or(foreground)),
+        border_color,
+        border_color_pressed,
         status,
     )
 }
@@ -293,9 +365,26 @@ pub fn reply_preview(theme: &Theme, status: Status) -> Style {
 }
 
 pub fn preview_card(theme: &Theme, status: Status) -> Style {
-    let foreground = theme.styles().text.primary.color;
-    let background = theme.styles().buttons.secondary.background;
-    let background_hover = theme.styles().buttons.secondary.background_hover;
+    let default_foreground = theme.styles().text.primary.color;
+    let button_colors = theme.styles().buttons.secondary;
+
+    let button_style = ButtonStyle {
+        selected: false,
+        hover: false,
+    };
+    let button_style_hover = ButtonStyle {
+        selected: button_style.selected,
+        hover: !button_style.hover,
+    };
+
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+
+    let background = *button_colors.background(button_style);
+    let background_hover = *button_colors.background(button_style_hover);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
 
     let border = Border {
         radius: 4.0.into(),
@@ -312,7 +401,7 @@ pub fn preview_card(theme: &Theme, status: Status) -> Style {
         },
         Status::Hovered => Style {
             background: Some(Background::Color(background_hover)),
-            text_color: foreground,
+            text_color: foreground_hover,
             border,
             ..Default::default()
         },
