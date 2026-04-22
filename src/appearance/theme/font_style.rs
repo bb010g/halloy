@@ -21,11 +21,13 @@ pub fn action(theme: &Theme) -> Option<FontStyle> {
 }
 
 pub fn button_primary(theme: &Theme) -> Option<FontStyle> {
-    primary(theme)
+    let font_style = theme.styles().buttons.primary.text.font_style;
+    font_style.or_else(|| primary(theme))
 }
 
 pub fn button_secondary(theme: &Theme) -> Option<FontStyle> {
-    secondary(theme)
+    let font_style = theme.styles().buttons.secondary.text.font_style;
+    font_style.or_else(|| secondary(theme))
 }
 
 pub fn button_picker(theme: &Theme) -> Option<FontStyle> {
@@ -33,7 +35,8 @@ pub fn button_picker(theme: &Theme) -> Option<FontStyle> {
 }
 
 pub fn button_preview_card(theme: &Theme) -> Option<FontStyle> {
-    primary(theme)
+    let font_style = theme.styles().buttons.secondary.text.font_style;
+    font_style.or_else(|| primary(theme))
 }
 
 pub fn button_preview_card_secondary(theme: &Theme) -> Option<FontStyle> {

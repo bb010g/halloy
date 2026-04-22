@@ -47,16 +47,24 @@ debug = <text style>
 trace = <text style>
 
 [buttons.primary]
+text = <text style>
 background = "<color string>"
+text_hover = <text style>
 background_hover = "<color string>"
+text_selected = <text style>
 background_selected = "<color string>"
+text_selected_hover = <text style>
 background_selected_hover = "<color string>"
 border_active = "<color string>"
 
 [buttons.secondary]
+text = <text style>
 background = "<color string>"
+text_hover = <text style>
 background_hover = "<color string>"
+text_selected = <text style>
 background_selected = "<color string>"
+text_selected_hover = <text style>
 background_selected_hover = "<color string>"
 border_active = "<color string>"
 

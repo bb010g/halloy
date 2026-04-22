@@ -110,12 +110,19 @@ pub struct Buttons {
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Button {
+    pub text: OptionalTextStyle,
     #[serde(with = "color_serde")]
     pub background: Color,
+    #[serde(with = "color_serde_maybe")]
+    pub text_hover: Option<Color>,
     #[serde(with = "color_serde")]
     pub background_hover: Color,
+    #[serde(with = "color_serde_maybe")]
+    pub text_selected: Option<Color>,
     #[serde(with = "color_serde")]
     pub background_selected: Color,
+    #[serde(with = "color_serde_maybe")]
+    pub text_selected_hover: Option<Color>,
     #[serde(with = "color_serde")]
     pub background_selected_hover: Color,
     #[serde(with = "color_serde_maybe")]
@@ -125,9 +132,13 @@ pub struct Button {
 impl Default for Button {
     fn default() -> Self {
         Self {
+            text: OptionalTextStyle::default(),
             background: Color::TRANSPARENT,
+            text_hover: <Option<Color>>::default(),
             background_hover: Color::TRANSPARENT,
+            text_selected: <Option<Color>>::default(),
             background_selected: Color::TRANSPARENT,
+            text_selected_hover: <Option<Color>>::default(),
             background_selected_hover: Color::TRANSPARENT,
             border_active: None,
         }
@@ -135,6 +146,15 @@ impl Default for Button {
 }
 
 impl Button {
+    pub fn text(&self, style: ButtonStyle) -> &Option<Color> {
+        match (style.selected, style.hover) {
+            (false, false) => &self.text.color,
+            (false, true) => &self.text_hover,
+            (true, false) => &self.text_selected,
+            (true, true) => &self.text_selected_hover,
+        }
+    }
+
     pub fn background(&self, style: ButtonStyle) -> &Color {
         match (style.selected, style.hover) {
             (false, false) => &self.background,
@@ -874,6 +894,14 @@ mod binary {
         BufferServerMessagesRequestTopic = 57,
         ButtonsPrimaryBorderActive = 58,
         ButtonsSecondaryBorderActive = 59,
+        ButtonsPrimaryText = 60,
+        ButtonsPrimaryTextHover = 61,
+        ButtonsPrimaryTextSelected = 62,
+        ButtonsPrimaryTextSelectedHover = 63,
+        ButtonsSecondaryText = 64,
+        ButtonsSecondaryTextHover = 65,
+        ButtonsSecondaryTextSelected = 66,
+        ButtonsSecondaryTextSelectedHover = 67,
     }
 
     impl Tag {
@@ -1000,6 +1028,28 @@ mod binary {
                 }
                 Tag::BufferServerMessagesChangeTopic => {
                     styles.buffer.server_messages.change_topic.color?
+                }
+                Tag::ButtonsPrimaryText => styles.buttons.primary.text.color?,
+                Tag::ButtonsPrimaryTextHover => {
+                    styles.buttons.primary.text_hover?
+                }
+                Tag::ButtonsPrimaryTextSelected => {
+                    styles.buttons.primary.text_selected?
+                }
+                Tag::ButtonsPrimaryTextSelectedHover => {
+                    styles.buttons.primary.text_selected_hover?
+                }
+                Tag::ButtonsSecondaryText => {
+                    styles.buttons.secondary.text.color?
+                }
+                Tag::ButtonsSecondaryTextHover => {
+                    styles.buttons.secondary.text_hover?
+                }
+                Tag::ButtonsSecondaryTextSelected => {
+                    styles.buttons.secondary.text_selected?
+                }
+                Tag::ButtonsSecondaryTextSelectedHover => {
+                    styles.buttons.secondary.text_selected_hover?
                 }
             };
 
@@ -1156,6 +1206,30 @@ mod binary {
                 Tag::BufferServerMessagesChangeTopic => {
                     styles.buffer.server_messages.change_topic.color =
                         Some(color);
+                }
+                Tag::ButtonsPrimaryText => {
+                    styles.buttons.primary.text.color = Some(color);
+                }
+                Tag::ButtonsPrimaryTextHover => {
+                    styles.buttons.primary.text_hover = Some(color);
+                }
+                Tag::ButtonsPrimaryTextSelected => {
+                    styles.buttons.primary.text_selected = Some(color);
+                }
+                Tag::ButtonsPrimaryTextSelectedHover => {
+                    styles.buttons.primary.text_selected_hover = Some(color);
+                }
+                Tag::ButtonsSecondaryText => {
+                    styles.buttons.secondary.text.color = Some(color);
+                }
+                Tag::ButtonsSecondaryTextHover => {
+                    styles.buttons.secondary.text_hover = Some(color);
+                }
+                Tag::ButtonsSecondaryTextSelected => {
+                    styles.buttons.secondary.text_selected = Some(color);
+                }
+                Tag::ButtonsSecondaryTextSelectedHover => {
+                    styles.buttons.secondary.text_selected_hover = Some(color);
                 }
             }
         }

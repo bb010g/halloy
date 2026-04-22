@@ -1141,10 +1141,14 @@ impl Buttons {
 )]
 #[strum(serialize_all = "kebab-case")]
 pub enum Button {
+    Text,
     #[default]
     Background,
+    TextHover,
     BackgroundHover,
+    TextSelected,
     BackgroundSelected,
+    TextSelectedHover,
     BackgroundSelectedHover,
     BorderActive,
 }
@@ -1152,9 +1156,13 @@ pub enum Button {
 impl Button {
     fn color(&self, styles: &theme::Button) -> Option<Color> {
         match self {
+            Button::Text => styles.text.color,
             Button::Background => Some(styles.background),
+            Button::TextHover => styles.text_hover,
             Button::BackgroundHover => Some(styles.background_hover),
+            Button::TextSelected => styles.text_selected,
             Button::BackgroundSelected => Some(styles.background_selected),
+            Button::TextSelectedHover => styles.text_selected_hover,
             Button::BackgroundSelectedHover => {
                 Some(styles.background_selected_hover)
             }
@@ -1162,11 +1170,15 @@ impl Button {
         }
     }
 
-    fn font_style(&self, _styles: &theme::Button) -> Option<Option<FontStyle>> {
+    fn font_style(&self, styles: &theme::Button) -> Option<Option<FontStyle>> {
         match self {
+            Button::Text => Some(styles.text.font_style),
             Button::Background => None,
+            Button::TextHover => None,
             Button::BackgroundHover => None,
+            Button::TextSelected => None,
             Button::BackgroundSelected => None,
+            Button::TextSelectedHover => None,
             Button::BackgroundSelectedHover => None,
             Button::BorderActive => None,
         }
@@ -1176,23 +1188,36 @@ impl Button {
         &self,
         styles: &mut theme::Button,
         color: Option<Color>,
-        _font_style: Option<FontStyle>,
+        font_style: Option<FontStyle>,
     ) {
         match self {
+            Button::Text => {
+                styles.text.color = color;
+                styles.text.font_style = font_style;
+            }
             Button::Background => {
                 if let Some(color) = color {
                     styles.background = color;
                 }
+            }
+            Button::TextHover => {
+                styles.text_hover = color;
             }
             Button::BackgroundHover => {
                 if let Some(color) = color {
                     styles.background_hover = color;
                 }
             }
+            Button::TextSelected => {
+                styles.text_selected = color;
+            }
             Button::BackgroundSelected => {
                 if let Some(color) = color {
                     styles.background_selected = color;
                 }
+            }
+            Button::TextSelectedHover => {
+                styles.text_selected_hover = color;
             }
             Button::BackgroundSelectedHover => {
                 if let Some(color) = color {

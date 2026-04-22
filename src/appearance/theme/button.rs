@@ -102,9 +102,9 @@ pub fn sidebar_buffer(
         hover: false,
     };
 
-    let foreground = None;
-    let foreground_hover = None;
-    let foreground_pressed = None;
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
@@ -150,9 +150,9 @@ pub fn primary(theme: &Theme, status: Status, selected: bool) -> Style {
         hover: button_style_hover.hover,
     };
 
-    let foreground = None;
-    let foreground_hover = None;
-    let foreground_pressed = None;
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
@@ -195,13 +195,17 @@ pub fn secondary(theme: &Theme, status: Status, selected: bool) -> Style {
         hover: button_style_hover.hover,
     };
 
-    let foreground = default_foreground;
-    let foreground_hover = default_foreground;
-    let foreground_pressed = default_foreground;
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
+    let foreground_pressed = button_colors.text(button_style_pressed);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
     let background_pressed = *button_colors.background(button_style_pressed);
+
+    let foreground = foreground.unwrap_or(default_foreground);
+    let foreground_hover = foreground_hover.unwrap_or(default_foreground);
+    let foreground_pressed = foreground_pressed.unwrap_or(default_foreground);
 
     let border_color = None;
     let border_color_pressed = None;
@@ -236,9 +240,9 @@ pub fn picker(theme: &Theme, status: Status, is_selected: bool) -> Style {
         hover: button_style.hover,
     };
 
-    let foreground = None;
-    let foreground_hover = None;
-    let foreground_pressed = None;
+    let foreground = *button_colors.text(button_style);
+    let foreground_hover = *button_colors.text(button_style_hover);
+    let foreground_pressed = *button_colors.text(button_style_pressed);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
@@ -286,9 +290,9 @@ pub fn reaction(
         hover: !button_style_hover.hover,
     };
 
-    let foreground = None;
-    let foreground_hover = None;
-    let foreground_pressed = None;
+    let foreground = *button_colors.text(button_style);
+    let foreground_hover = *button_colors.text(button_style_hover);
+    let foreground_pressed = *button_colors.text(button_style_pressed);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
@@ -373,8 +377,8 @@ pub fn preview_card(theme: &Theme, status: Status) -> Style {
         hover: !button_style.hover,
     };
 
-    let foreground = None;
-    let foreground_hover = None;
+    let foreground = button_colors.text(button_style);
+    let foreground_hover = button_colors.text(button_style_hover);
 
     let background = *button_colors.background(button_style);
     let background_hover = *button_colors.background(button_style_hover);
