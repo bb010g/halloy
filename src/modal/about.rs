@@ -176,7 +176,10 @@ impl About {
         let copy_all_content = if self.copied == Some(Field::All) {
             container(
                 row![
-                    text("Copied"),
+                    text("Copied").font_maybe(
+                        theme::font_style::button_secondary(theme)
+                            .map(font::get)
+                    ),
                     Space::new().width(6),
                     icon::checkmark().style(theme::text::success)
                 ]
@@ -185,9 +188,11 @@ impl About {
             .align_x(alignment::Horizontal::Center)
             .width(Length::Fill)
         } else {
-            container(text("Copy all"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill)
+            container(text("Copy all").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill)
         };
 
         let copy_all = button(copy_all_content)
@@ -202,9 +207,11 @@ impl About {
             )));
 
         let close = button(
-            container(text("Close"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Close").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fixed(250.0))

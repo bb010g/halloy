@@ -36,9 +36,14 @@ pub fn view<'a>(
         .push(
             column![
                 button(
-                    container(text("Accept"))
-                        .align_x(alignment::Horizontal::Center)
-                        .width(Length::Fill),
+                    container(
+                        text("Accept").font_maybe(
+                            theme::font_style::button_secondary(theme)
+                                .map(font::get)
+                        )
+                    )
+                    .align_x(alignment::Horizontal::Center)
+                    .width(Length::Fill),
                 )
                 .padding(5)
                 .width(Length::Fixed(250.0))
@@ -49,9 +54,14 @@ pub fn view<'a>(
                     super::ServerConnect::AcceptNewServer
                 )),
                 button(
-                    container(text("Close"))
-                        .align_x(alignment::Horizontal::Center)
-                        .width(Length::Fill),
+                    container(
+                        text("Close").font_maybe(
+                            theme::font_style::button_secondary(theme)
+                                .map(font::get)
+                        )
+                    )
+                    .align_x(alignment::Horizontal::Center)
+                    .width(Length::Fill),
                 )
                 .padding(5)
                 .width(Length::Fixed(250.0))

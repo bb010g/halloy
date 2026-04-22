@@ -54,9 +54,11 @@ impl Welcome {
         let config_dir = String::from(Config::config_dir().to_string_lossy());
 
         let config_button = button(
-            container(text(config_dir))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Shrink),
+            container(text(config_dir).font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Shrink),
         )
         .padding([5, 20])
         .width(Length::Shrink)
@@ -64,9 +66,11 @@ impl Welcome {
         .on_press(Message::OpenConfigurationDirectory);
 
         let documentation_button = button(
-            container(text("Open Documentation Website"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Open Documentation Website").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fill)
@@ -74,9 +78,11 @@ impl Welcome {
         .on_press(Message::OpenWikiWebsite);
 
         let reload_button = button(
-            container(text("Reload Config File"))
-                .align_x(alignment::Horizontal::Center)
-                .width(Length::Fill),
+            container(text("Reload Config File").font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ))
+            .align_x(alignment::Horizontal::Center)
+            .width(Length::Fill),
         )
         .padding(5)
         .width(Length::Fill)

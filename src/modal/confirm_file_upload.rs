@@ -3,7 +3,7 @@ use iced::widget::{button, column, container, row, span, text};
 
 use super::Message;
 use crate::widget::{Element, selectable_rich_text};
-use crate::{Theme, theme};
+use crate::{Theme, font, theme};
 
 pub fn view<'a>(
     url: &'a str,
@@ -32,18 +32,22 @@ pub fn view<'a>(
                 .on_link(|()| Message::OpenURL(url.to_string()))
                 .align_x(iced::Alignment::Center),
             row![
-                button(text("Upload"))
-                    .padding(5)
-                    .style(|theme, status| theme::button::secondary(
-                        theme, status, false
-                    ))
-                    .on_press(Message::ConfirmFileUpload),
-                button(text("Close"))
-                    .padding(5)
-                    .style(|theme, status| theme::button::secondary(
-                        theme, status, false
-                    ))
-                    .on_press(Message::Cancel),
+                button(text("Upload").font_maybe(
+                    theme::font_style::button_secondary(theme).map(font::get)
+                ))
+                .padding(5)
+                .style(|theme, status| theme::button::secondary(
+                    theme, status, false
+                ))
+                .on_press(Message::ConfirmFileUpload),
+                button(text("Close").font_maybe(
+                    theme::font_style::button_secondary(theme).map(font::get)
+                ))
+                .padding(5)
+                .style(|theme, status| theme::button::secondary(
+                    theme, status, false
+                ))
+                .on_press(Message::Cancel),
             ]
             .spacing(8),
         ]

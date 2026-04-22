@@ -299,12 +299,14 @@ pub fn view<'a>(
             ),
         };
 
-        let top_row_button = button(text(content).size(divider_font_size))
-            .padding([3, 5])
-            .style(|theme, status| {
-                theme::button::secondary(theme, status, false)
-            })
-            .on_press_maybe(message);
+        let top_row_button = button(
+            text(content).size(divider_font_size).font_maybe(
+                theme::font_style::button_secondary(theme).map(font::get),
+            ),
+        )
+        .padding([3, 5])
+        .style(|theme, status| theme::button::secondary(theme, status, false))
+        .on_press_maybe(message);
 
         Some(
             row![space::horizontal(), top_row_button, space::horizontal()]
